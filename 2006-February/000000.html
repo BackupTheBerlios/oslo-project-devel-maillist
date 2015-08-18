@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Oslo-project-devel] NullPointerException in allInstances()
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/oslo-project-devel/2006-February/index.html" >
+   <LINK REL="made" HREF="mailto:oslo-project-devel%40lists.berlios.de?Subject=Re%3A%20%5BOslo-project-devel%5D%20NullPointerException%20in%20allInstances%28%29&In-Reply-To=%3C000001c63357%242d4425d0%2470073359%40cestra%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Oslo-project-devel] NullPointerException in allInstances()</H1>
+    <B>Stefan Schulze</B> 
+    <A HREF="mailto:oslo-project-devel%40lists.berlios.de?Subject=Re%3A%20%5BOslo-project-devel%5D%20NullPointerException%20in%20allInstances%28%29&In-Reply-To=%3C000001c63357%242d4425d0%2470073359%40cestra%3E"
+       TITLE="[Oslo-project-devel] NullPointerException in allInstances()">algroth at gmx.de
+       </A><BR>
+    <I>Fri Feb 17 01:14:46 CET 2006</I>
+    <P><UL>
+        
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hallo...
+
+Ich will den OSLO-Prozessor in einem Projekt einsetzen, finde jedoch
+nirgendwo eine Doku zum Code.
+Ich bin schon soweit gekommen, dass ich ein eigenes Metamodell und
+Modellinstanz laden und kleinere Abfragen drauf ausf&#252;hren kann. Probleme
+bekomme ich immer dann, wenn ich &quot;allInstances()&quot; aufrufe. Entweder bekomme
+ich eine leere Liste zur&#252;ck oder es wird eine NullPointerException geworfen.
+
+Das Metamodell:
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;xmi:XMI xmi:version=&quot;2.0&quot;
+    xmlns:xmi=&quot;<A HREF="http://www.omg.org/XMI">http://www.omg.org/XMI</A>&quot;
+xmlns:xsi=&quot;<A HREF="http://www.w3.org/2001/XMLSchema-instance">http://www.w3.org/2001/XMLSchema-instance</A>&quot;
+    xmlns:ecore=&quot;<A HREF="http://www.eclipse.org/emf/2002/Ecore">http://www.eclipse.org/emf/2002/Ecore</A>&quot;&gt;
+  &lt;ecore:EPackage name=&quot;test&quot; nsURI=&quot;<A HREF="http://tests/SimpleTest">http://tests/SimpleTest</A>&quot;
+nsPrefix=&quot;TestPrefix&quot;&gt;
+    &lt;eClassifiers xsi:type=&quot;ecore:EClass&quot; name=&quot;Test&quot;&gt;
+      &lt;eStructuralFeatures xsi:type=&quot;ecore:EAttribute&quot; name=&quot;a&quot;
+ordered=&quot;false&quot; unique=&quot;false&quot;
+          lowerBound=&quot;1&quot; eType=&quot;#/1/String&quot;/&gt;
+      &lt;eStructuralFeatures xsi:type=&quot;ecore:EReference&quot; name=&quot;t2&quot;
+ordered=&quot;false&quot; lowerBound=&quot;1&quot;
+          eType=&quot;#/0/Test2&quot;/&gt;
+    &lt;/eClassifiers&gt;
+    &lt;eClassifiers xsi:type=&quot;ecore:EClass&quot; name=&quot;Test2&quot;&gt;
+      &lt;eStructuralFeatures xsi:type=&quot;ecore:EAttribute&quot; name=&quot;b&quot;
+ordered=&quot;false&quot; unique=&quot;false&quot;
+          lowerBound=&quot;1&quot; eType=&quot;#/1/String&quot;/&gt;
+      &lt;eStructuralFeatures xsi:type=&quot;ecore:EAttribute&quot; name=&quot;c&quot;
+ordered=&quot;false&quot; unique=&quot;false&quot;
+          lowerBound=&quot;1&quot; eType=&quot;#/1/Integer&quot;/&gt;
+    &lt;/eClassifiers&gt;
+  &lt;/ecore:EPackage&gt;
+  &lt;ecore:EPackage name=&quot;PrimitiveTypes&quot;  nsURI=&quot;<A HREF="http://tests/PrimitiveTypes">http://tests/PrimitiveTypes</A>&quot;
+nsPrefix=&quot;primitive&quot;&gt;
+    &lt;eClassifiers xsi:type=&quot;ecore:EDataType&quot; name=&quot;Integer&quot;
+instanceClassName=&quot;int&quot;/&gt;
+    &lt;eClassifiers xsi:type=&quot;ecore:EDataType&quot; name=&quot;String&quot;
+instanceClassName=&quot;java.lang.String&quot;/&gt;    
+  &lt;/ecore:EPackage&gt;
+&lt;/xmi:XMI&gt;
+
+
+Das Modell:
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;xmi:XMI xmi:version=&quot;2.0&quot; xmlns:xmi=&quot;<A HREF="http://www.omg.org/XMI">http://www.omg.org/XMI</A>&quot;
+xmlns=&quot;<A HREF="http://tests/SimpleTest">http://tests/SimpleTest</A>&quot;&gt;
+  &lt;Test a=&quot;Person&quot;&gt;
+    &lt;t2 b=&quot;firstName&quot; c=&quot;5&quot;/&gt;
+  &lt;/Test&gt;
+&lt;/xmi:XMI&gt;
+
+
+Initialisiert wird der Prozessor entsprechend der OclGUI:
+
+&gt;<i> EObject eobject = (EObject)instanceResource.getContents().get(0);
+</I>&gt;<i> processor.addModel(testMetaModel);
+</I>&gt;<i> Environment env = processor.environment(&quot;self&quot;, eobject.getClass());
+</I>&gt;<i> RuntimeEnvironment renv = processor.runtimeEnvironment(&quot;self&quot;, eobject);
+</I>
+Die anschlie&#223;ende Abfrage
+&gt;<i> List l=processor.evaluate(ocl,env,renv,log);
+</I>
+f&#252;hrt mit 
+&gt;<i> String ocl=&quot;context Test inv:Test.allInstances()&quot;;
+</I>zu einer leeren Liste l.
+Die Abfrage &quot;context Test inv:self.allInstances()&quot; und &quot;context Test
+inv:allInstances()&quot; f&#252;hren jeweils zu einer NullPointerException in
+OclEvaluatorVisitorImpl.java:813.
+Nur die Abfrage &quot;context Test inv:Test2.allInstances()&quot; f&#252;hrt zu dem
+erwarteten Ergebnis.
+
+Was mache ich da falsch? Wie bekomme ich alle Instanzen von &quot;Test&quot;?
+
+Wie benutzt man eigentlich die Environment- und RuntimeEnvironment-Objekte?
+Ich habe mir das eigentlich nur aus der OCLGui abgeguckt, allerdings nicht
+wirklich verstanden.
+
+
+
+
+Wenn ich den trunk aus dem SVN-Repository runterlade, bekomme ich mehrere
+Fehler:
+- Der Aufruf von TypeFactory#buildLongType() in
+org.oslo.ocl20.bridge4emf.EmfBridgeFactory#buildModelElement(Object) ist
+nicht kompilierbar, da es die Methode TypeFactory#buildLongType() nicht
+gibt.
+- An einigen Stellen wurden Klassen mit &quot;$&quot; im Namen deklariert (zum
+Beispiel org.oslo.ocl20.semantics.model.contexts.Constraint$Class). Dies
+f&#252;hrt teilweise dazu, dass nicht kompiliert werden kann. Eclipse quittiert
+das bei der Deklaration mit &quot;The public type Constraint$Class must be
+defined in ist own file&quot; und bei dem Import der Klasse mit &quot;The import ...
+cannot be resolved&quot;. Ich vermute mal, dass es an dem &quot;$&quot; im Namen liegt, da
+es normalerweise ein Trennzeichen vom Java-Compiler f&#252;r innere Klassen ist.
+Wenn man die entsprechenden Klassen zu inneren Klassen der jeweiligen
+Interfaces macht, funktioniert alles.
+
+
+
+In den News vom 09.02. steht, dass man nun mit der OCL-Gui auch andere
+Metamodelle nutzen kann als das UML2-Metamodel. Wo finde ich diese Version?
+Im Trunk ist noch die Revision 6 vom 18.11.2005 aktuell und auch in den
+Branches konnte ich keine aktuellere Version finden.
+
+
+
+Auf der Berlios-Seite ist der Link zum Mailinglisten-Archiv scheinbar
+defekt.
+
+
+Ich hoffe, ihr k&#246;nnt mir bei meinen Fragen weiterhelfen,
+
+  Stefan Schulze
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/oslo-project-devel">More information about the Oslo-project-devel
+mailing list</a><br>
+</body></html>

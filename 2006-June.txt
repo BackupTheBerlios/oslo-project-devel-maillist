@@ -1,0 +1,19 @@
+From stefan.schulze at tu-bs.de  Tue Jun  6 03:04:06 2006
+From: stefan.schulze at tu-bs.de (Stefan Schulze)
+Date: Tue, 6 Jun 2006 03:04:06 +0200
+Subject: [Oslo-project-devel] Ist das Projekt noch aktiv?
+Message-ID: <001401c68905$1cc32270$01f8a986@cestra>
+
+Hallo...
+
+ich wollte mich nur mal erkundigen, ob das Projekt noch aktiv ist, also ob
+Code und evtl. Dokumentation dazu noch weiter gepflegt und entwickelt wird.
+Auf dieser Liste ist ja leider keinerlei Traffic und der letzte Commit im
+SVN ist vom 17.02.06. 
+
+Tsch??,
+  Stefan
+
+
+
+

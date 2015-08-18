@@ -1,0 +1,126 @@
+From algroth at gmx.de  Fri Feb 17 01:14:46 2006
+From: algroth at gmx.de (Stefan Schulze)
+Date: Fri, 17 Feb 2006 01:14:46 +0100
+Subject: [Oslo-project-devel] NullPointerException in allInstances()
+Message-ID: <000001c63357$2d4425d0$70073359@cestra>
+
+Hallo...
+
+Ich will den OSLO-Prozessor in einem Projekt einsetzen, finde jedoch
+nirgendwo eine Doku zum Code.
+Ich bin schon soweit gekommen, dass ich ein eigenes Metamodell und
+Modellinstanz laden und kleinere Abfragen drauf ausf?hren kann. Probleme
+bekomme ich immer dann, wenn ich "allInstances()" aufrufe. Entweder bekomme
+ich eine leere Liste zur?ck oder es wird eine NullPointerException geworfen.
+
+Das Metamodell:
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore">
+  <ecore:EPackage name="test" nsURI="http://tests/SimpleTest"
+nsPrefix="TestPrefix">
+    <eClassifiers xsi:type="ecore:EClass" name="Test">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="a"
+ordered="false" unique="false"
+          lowerBound="1" eType="#/1/String"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="t2"
+ordered="false" lowerBound="1"
+          eType="#/0/Test2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Test2">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="b"
+ordered="false" unique="false"
+          lowerBound="1" eType="#/1/String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="c"
+ordered="false" unique="false"
+          lowerBound="1" eType="#/1/Integer"/>
+    </eClassifiers>
+  </ecore:EPackage>
+  <ecore:EPackage name="PrimitiveTypes"  nsURI="http://tests/PrimitiveTypes"
+nsPrefix="primitive">
+    <eClassifiers xsi:type="ecore:EDataType" name="Integer"
+instanceClassName="int"/>
+    <eClassifiers xsi:type="ecore:EDataType" name="String"
+instanceClassName="java.lang.String"/>    
+  </ecore:EPackage>
+</xmi:XMI>
+
+
+Das Modell:
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI"
+xmlns="http://tests/SimpleTest">
+  <Test a="Person">
+    <t2 b="firstName" c="5"/>
+  </Test>
+</xmi:XMI>
+
+
+Initialisiert wird der Prozessor entsprechend der OclGUI:
+
+> EObject eobject = (EObject)instanceResource.getContents().get(0);
+> processor.addModel(testMetaModel);
+> Environment env = processor.environment("self", eobject.getClass());
+> RuntimeEnvironment renv = processor.runtimeEnvironment("self", eobject);
+
+Die anschlie?ende Abfrage
+> List l=processor.evaluate(ocl,env,renv,log);
+
+f?hrt mit 
+> String ocl="context Test inv:Test.allInstances()";
+zu einer leeren Liste l.
+Die Abfrage "context Test inv:self.allInstances()" und "context Test
+inv:allInstances()" f?hren jeweils zu einer NullPointerException in
+OclEvaluatorVisitorImpl.java:813.
+Nur die Abfrage "context Test inv:Test2.allInstances()" f?hrt zu dem
+erwarteten Ergebnis.
+
+Was mache ich da falsch? Wie bekomme ich alle Instanzen von "Test"?
+
+Wie benutzt man eigentlich die Environment- und RuntimeEnvironment-Objekte?
+Ich habe mir das eigentlich nur aus der OCLGui abgeguckt, allerdings nicht
+wirklich verstanden.
+
+
+
+
+Wenn ich den trunk aus dem SVN-Repository runterlade, bekomme ich mehrere
+Fehler:
+- Der Aufruf von TypeFactory#buildLongType() in
+org.oslo.ocl20.bridge4emf.EmfBridgeFactory#buildModelElement(Object) ist
+nicht kompilierbar, da es die Methode TypeFactory#buildLongType() nicht
+gibt.
+- An einigen Stellen wurden Klassen mit "$" im Namen deklariert (zum
+Beispiel org.oslo.ocl20.semantics.model.contexts.Constraint$Class). Dies
+f?hrt teilweise dazu, dass nicht kompiliert werden kann. Eclipse quittiert
+das bei der Deklaration mit "The public type Constraint$Class must be
+defined in ist own file" und bei dem Import der Klasse mit "The import ...
+cannot be resolved". Ich vermute mal, dass es an dem "$" im Namen liegt, da
+es normalerweise ein Trennzeichen vom Java-Compiler f?r innere Klassen ist.
+Wenn man die entsprechenden Klassen zu inneren Klassen der jeweiligen
+Interfaces macht, funktioniert alles.
+
+
+
+In den News vom 09.02. steht, dass man nun mit der OCL-Gui auch andere
+Metamodelle nutzen kann als das UML2-Metamodel. Wo finde ich diese Version?
+Im Trunk ist noch die Revision 6 vom 18.11.2005 aktuell und auch in den
+Branches konnte ich keine aktuellere Version finden.
+
+
+
+Auf der Berlios-Seite ist der Link zum Mailinglisten-Archiv scheinbar
+defekt.
+
+
+Ich hoffe, ihr k?nnt mir bei meinen Fragen weiterhelfen,
+
+  Stefan Schulze
+
+
+
+
